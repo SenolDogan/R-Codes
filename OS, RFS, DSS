@@ -1,0 +1,23 @@
+## Overal Survival
+library(survival)
+data <- read.csv("~/Desktop/Senol.csv")
+survival_data <- data.frame(time = data$Date_OS..months., event = data$Event_OS)
+km_fit <- survfit(Surv(time, event) ~ 1, data = survival_data)
+plot(km_fit, xlab = "Time (Months)", ylab = "Survival Probability", main = "Kaplan-Meier Plot for Overall Survival", col = "blue", lwd = 2)
+grid()
+
+## RFS
+library(survival)
+data <- read.csv("~/Desktop/Senol.csv")
+survival_data <- data.frame(time = data$Date_RFS..months., event = data$Event_RFS)
+km_fit <- survfit(Surv(time, event) ~ 1, data = survival_data)
+plot(km_fit, xlab = "Time (Months)", ylab = "Survival Probability", main = "Kaplan-Meier Plot for Overall Survival", col = "blue", lwd = 2)
+grid()
+
+## DSS
+library(survival)
+data <- read.csv("~/Desktop/Senol.csv")
+survival_data <- data.frame(time = data$Date_DSS..months., event = data$Event_DSS)
+km_fit <- survfit(Surv(time, event) ~ 1, data = survival_data)
+plot(km_fit, xlab = "Time (Months)", ylab = "Survival Probability", main = "Kaplan-Meier Plot for Overall Survival", col = "blue", lwd = 2)
+grid()
