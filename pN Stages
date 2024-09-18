@@ -1,0 +1,38 @@
+## Libraries
+library(dplyr)
+library(survival)
+library(Hmisc)
+## Data upload
+df <- read.csv("~/Desktop/Senol.csv")
+## pN.Stage a??amalar??na g??re grupland??rma
+pN.Stages <- df %>% group_by(pN.Stage)
+##  Calculations
+results <- data.frame(
+  pN.Stage = character(),
+  N_Number_of_patients = integer(),
+  Disease_Specific_Percent_95_CI = character(),
+  Recurrence_Free_Percent_95_CI = character(),
+  Overall_Percent_95_CI = character(),
+  Median_Follow_Up_months_IQR = character(),
+  stringsAsFactors = FALSE)
+## Calculations
+for (name in unique(df$pN.Stage)) {
+  group <- df %>% filter(pN.Stage == name)
+  n_patients <- nrow(group)
+  disease_specific <- (1 - mean(group$Event_DSS, na.rm = TRUE)) * 100
+  disease_specific_ci <- binconf(sum(group$Event_DSS, na.rm = TRUE), n_patients, method = "wilson")
+  recurrence_free <- (1 - mean(group$Event_RFS, na.rm = TRUE)) * 100
+  recurrence_free_ci <- binconf(sum(group$Event_RFS, na.rm = TRUE), n_patients, method = "wilson")
+  overall <- (1 - mean(group$Event_OS, na.rm = TRUE)) * 100
+  overall_ci <- binconf(sum(group$Event_OS, na.rm = TRUE), n_patients, method = "wilson")
+  median_follow_up <- median(group$Date_OS..months., na.rm = TRUE)
+  iqr_follow_up <- IQR(group$Date_OS..months., na.rm = TRUE)
+  results <- rbind(results, data.frame(
+    pN.Stage = name,
+    N_Number_of_patients = n_patients,
+    Disease_Specific_Percent_95_CI = sprintf("%.2f%% (%.2f%%, %.2f%%)", disease_specific, disease_specific_ci[2] * 100, disease_specific_ci[3] * 100),
+    Recurrence_Free_Percent_95_CI = sprintf("%.2f%% (%.2f%%, %.2f%%)", recurrence_free, recurrence_free_ci[2] * 100, recurrence_free_ci[3] * 100),
+    Overall_Percent_95_CI = sprintf("%.2f%% (%.2f%%, %.2f%%)", overall, overall_ci[2] * 100, overall_ci[3] * 100),
+    Median_Follow_Up_months_IQR = sprintf("%.1f (%.1f)", median_follow_up, iqr_follow_up)))}
+## Sonu??lar?? yazd??rma
+print(results)
