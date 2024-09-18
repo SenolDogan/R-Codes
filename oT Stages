@@ -1,0 +1,39 @@
+
+## Load necessary libraries
+library(survival)
+library(survminer)
+## Load the dataset
+df <- read.csv("~/Desktop/Senol.csv")
+## Filter the data to include only relevant columns and drop NA values
+df <- df[!is.na(df$oT.Stage) & !is.na(df$Date_OS..months.) & !is.na(df$Event_OS), ]
+
+## Convert 'o_t_stage' to a factor
+df$o_t_stage <- as.factor(df$oT.Stage)
+
+## Fit the Kaplan-Meier survival curves
+fit <- survfit(Surv(Date_OS..months., Event_OS) ~ oT.Stage, data = df)
+
+## Plot the survival curves with confidence intervals
+p <- ggsurvplot(fit, data = df, 
+                conf.int = TRUE, 
+                xlim = c(0, 60), 
+                xlab = "Months", 
+                ylab = "Survival Probability", 
+                title = "Overall Survival by OT Stage",
+                palette = c("#("#101E50", "# "#FF3E87", "# "#7C53E4"),
+                            risk.table = TRUE, 
+                            risk.table.col = "strata",
+                            risk.table.height = 0.25,
+                            ggtheme = theme_minimal())
+              
+                ## Calculate p-values between stages
+                pairwise_survdiff(Surv(Date_OS..months., Event_OS) ~ oT.Stage, data = df)
+
+                ## Add p-values to the plot
+                p$plot <- p$plot + 
+                annotate("text", x = 30, y = 0.8, label = "Stage 1 vs Stage 2: p=0.XXXX", size = 3) +
+                annotate("text", x = 30, y = 0.75, label = "Stage 1 vs Stage 3: p=0.XXXX", size = 3) +
+                annotate("text", x = 30, y = 0.7, label = "Stage 2 vs Stage 3: p=0.XXXX", size = 3)
+
+                ## Print the plot
+                print(p)
