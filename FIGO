@@ -2,7 +2,7 @@
 library(dplyr)
 library(survival)
 library(Hmisc)
-## Data Input
+## Data Upload
 df <- read.csv("~/Desktop/Senol.csv")
 ## FIGO groups
 figo_groups <- df %>% group_by(FIGO.Stage)
