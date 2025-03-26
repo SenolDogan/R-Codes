@@ -2,9 +2,9 @@
 library(dplyr)
 library(survival)
 library(Hmisc)
-## Veriyi y??kleme
+## Data Input
 df <- read.csv("~/Desktop/Senol.csv")
-## FIGO a??amalar??na g??re grupland??rma
+## FIGO groups
 figo_groups <- df %>% group_by(FIGO.Stage)
 ## Calculations
 results <- data.frame(
@@ -34,5 +34,5 @@ for (name in unique(df$FIGO.Stage)) {
     Recurrence_Free_Percent_95_CI = sprintf("%.2f%% (%.2f%%, %.2f%%)", recurrence_free, recurrence_free_ci[2] * 100, recurrence_free_ci[3] * 100),
     Overall_Percent_95_CI = sprintf("%.2f%% (%.2f%%, %.2f%%)", overall, overall_ci[2] * 100, overall_ci[3] * 100),
     Median_Follow_Up_months_IQR = sprintf("%.1f (%.1f)", median_follow_up, iqr_follow_up)))}
-## Sonu??lar?? yazd??rma
+## Results
 print(results)
